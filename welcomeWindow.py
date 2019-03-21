@@ -26,7 +26,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)  # init inherited class
         tk.Tk.wm_title(self, "Custom Title")
         container = tk.Frame(self)
-        self.geometry("600x400+300+300")
+        self.geometry("550x350+300+300")
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -83,12 +83,6 @@ class Configure(tk.Frame):
         self.init_left_frame()
         self.init_rigth_frame()
 
-        #
-        # label_hint_view = ttk.Label(self, text="Відображення: ",
-        #                             style="HINT.TLabel")
-        # label_hint_view
-        # # Що робить Text Variable
-
     def sign_frame(self):
         frame0 = tk.Frame(self, bg="magenta")
         frame0.pack(fill=tk.X)
@@ -97,50 +91,46 @@ class Configure(tk.Frame):
         label_sign.pack(side=tk.TOP, pady=10)
 
     def init_left_frame(self):
-        frame1 = tk.Frame(self, width=1, height=1, bg="green")
+        frame1 = tk.Frame(self, width=1, height=1, bg="green", borderwidth=15)
         frame1.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 
-        nested_frame = tk.Frame(frame1, bg="khaki", borderwidth=15)
-        nested_frame.pack(fill=tk.X)
-        # frame1 = tk.Frame(self, bg="green")
+        # frame1 = tk.Frame(frame1, bg="khaki", borderwidth=15)
         # frame1.pack(fill=tk.X)
 
-        label_hint_functional = ttk.Label(nested_frame, text="Функціональні:",
+        # frame1 = tk.Frame(self, bg="green")
+        # frame1.pack(fill=tk.X)
+        # nested_frame
+
+        label_hint_functional = ttk.Label(frame1, text="Функціональні:",
                                           style="HINT.TLabel")
-        # label_hint_functional.grid(row=0, column=0, pady=10, padx=15,
-        #                            sticky=tk.W)
         label_hint_functional.grid(row=0, column=0, pady=10, sticky=tk.W)
-        glider_cb = tk.Checkbutton(nested_frame, text="Добавити глайдер ")
-        # glider_cb.grid(row=1, column=0, pady=5, padx=15, sticky=tk.W)
+        glider_cb = tk.Checkbutton(frame1, text="Добавити глайдер ")
         glider_cb.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
-        glider_gun_cb = tk.Checkbutton(nested_frame,
+        glider_gun_cb = tk.Checkbutton(frame1,
                                        text="Добавити глайдерну гармату")
-        # glider_gun_cb.grid(row=2, column=0, pady=(0, 15), padx=15, sticky=tk.W)
         glider_gun_cb.grid(row=2, column=0, columnspan=2, pady=(0, 15),
                            sticky=tk.W)
 
-        label_view = ttk.Label(nested_frame, text="Відображення",
+        label_view = ttk.Label(frame1, text="Відображення",
                                style="HINT.TLabel")
-        # label_view.grid(row=3, column=0, pady=(0, 10), padx=15, sticky=tk.W)
         label_view.grid(row=3, column=0, pady=(0, 10), sticky=tk.W)
 
-        label_update = tk.Label(nested_frame, text="Швидкість оновлення ")
-        # label_update.grid(row=4, column=0, pady=(0, 5), padx=15, sticky=tk.W)
+        label_update = tk.Label(frame1, text="Швидкість оновлення ")
         label_update.grid(row=4, column=0, pady=(0, 5), sticky=tk.W)
         # test max value
-        update_interval = tk.Spinbox(nested_frame, increment=100, from_=100,
+        update_interval = tk.Spinbox(frame1, increment=100, from_=100,
                                      to=5000, width=6)
         update_interval.grid(row=4, column=1, pady=(0, 5), padx=10,
                              sticky=tk.W)
-        label_table_size = tk.Label(nested_frame, text="Величина таблиці")
+        label_table_size = tk.Label(frame1, text="Величина таблиці")
         label_table_size.grid(row=5, column=0, pady=(0, 5), sticky=tk.W)
         # поставити обмеження на величину таблиці (у вигляді діалогового вікна)
-        vcmd = (nested_frame.register(self.callback))
-        size_entry = tk.Entry(nested_frame, width=5, validate="all",
+        vcmd = (frame1.register(self.callback))
+        size_entry = tk.Entry(frame1, width=5, validate="all",
                               validatecommand=(vcmd, "%P"))
         size_entry.grid(row=5, column=1, pady=(0, 5), sticky=tk.W, padx=10)
 
-        random_cb = tk.Checkbutton(nested_frame,
+        random_cb = tk.Checkbutton(frame1,
                                    text="Випадкове заповнення таблиці")
         random_cb.grid(row=6, column=0, columnspan=2, pady=(15, 5),
                        sticky=tk.W)
@@ -152,20 +142,38 @@ class Configure(tk.Frame):
             return False
 
     def init_rigth_frame(self):
-        frame2 = tk.Frame(self, width=1, height=1, bg="yellow")
+        frame2 = tk.Frame(self, width=1, height=1, bg="yellow", borderwidth=15)
         frame2.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True)
 
         label_hint_cosmetic = ttk.Label(frame2, text="Косметичні:",
                                         style="HINT.TLabel")
-        label_hint_cosmetic.pack(side=tk.LEFT, pady=10, padx=10)
-        #
-        # combobox_dead = ttk.Combobox(frame2, values=[
-        #     "white", "gray", "black", "blue", "red", "pink",
-        #     "purple", "brown", "orange", "yellow", "green"], state="readonly",
-        #                              width=7)
-        # combobox_dead.pack(side=tk.RIGHT, padx=20)
-        info_label_cb = tk.Label(frame2, text="Колір мертвої клітини")
-        info_label_cb.pack(side=tk.TOP, padx=5, pady=10)
+        label_hint_cosmetic.grid(row=0, column=0, pady=10, sticky=tk.W)
+
+        dead_label = tk.Label(frame2, text="Колір мертвої клітини")
+        dead_label.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
+        combobox_color_dead = ttk.Combobox(frame2, values=[
+            "white", "gray", "black", "blue", "red", "pink",
+            "purple", "brown", "orange", "yellow", "green"], state="readonly",
+                                           width=7)
+        combobox_color_dead.grid(row=1, column=1, pady=(0, 5), padx=(15, 35),
+                                 sticky=tk.W)
+        alive_label = tk.Label(frame2, text="Колір живої клітини")
+        alive_label.grid(row=2, column=0, pady=(0, 5), sticky=tk.W)
+        combobox_color_alive = ttk.Combobox(frame2, values=[
+            "white", "gray", "black", "blue", "red", "pink",
+            "purple", "brown", "orange", "yellow", "green"], state="readonly",
+                                            width=7)
+        combobox_color_alive.grid(row=2, column=1, pady=(0, 5), padx=(15, 35),
+                                  sticky=tk.W)
+        view_markup_cb = tk.Checkbutton(frame2, text="Відображати сітку")
+        view_markup_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
+
+        insert_random_button = tk.Button(frame2, text="Випадкові значення")
+        insert_random_button.grid(row=4, column=0, pady=(65, 0), padx=(0, 20),
+                                  columnspan=2)
+        generate_button = tk.Button(frame2, text="Запустити")
+        generate_button.grid(row=4, column=0, pady=(65, 0), padx=(20, 0),
+                             sticky=tk.E, columnspan=2)
 
 
 class QuickStart(tk.Frame):
