@@ -31,6 +31,14 @@ class ConwayGameOfLifeGui(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        self.configuration = {"glider": tk.IntVar(),
+                              "glider_gun": tk.IntVar(),
+                              "update_interval": tk.IntVar(),
+                              "table_size": tk.IntVar(),
+                              "random_fill": tk.IntVar(),
+                              "color_dead": tk.StringVar(),
+                              "color_alive": tk.StringVar(),
+                              "show_markup": tk.IntVar()}
         self.frames = {}  # pre-defined a dictionary
 
         for F in (StartPage, Configure, QuickStart):
@@ -45,8 +53,6 @@ class ConwayGameOfLifeGui(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]  # get StartPage class from frames dict.
         frame.tkraise()  # bring frame to the top
-
-
 # ____________________back-end(above)__________________________________________
 
 
@@ -56,7 +62,7 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = ttk.Label(self, text="this is the start page", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)  # pad - padding for x and y
+        label.pack(pady=10, padx=10)
 
         button = ttk.Button(self, text="Configure",
                             command=lambda: controller.show_frame(Configure))
@@ -75,17 +81,15 @@ class Configure(tk.Frame):
 
         ttk.Style().configure("HINT.TLabel", foreground="grey",
                               font=HINT_FONT)
-        # Not Used
-        # ttk.Style().configure("REGULAR.TLabel",
-        #                       foreground="black",
-        #                       font=REGULAR_FONT)
+
         self.sign_frame()
         self.init_left_frame()
-        self.init_rigth_frame()
+        self.init_right_frame()
 
     def sign_frame(self):
         frame0 = tk.Frame(self, bg="magenta")
         frame0.pack(fill=tk.X)
+
         label_sign = tk.Label(frame0, text="Виберіть бажані налаштування",
                               font=LARGE_FONT)
         label_sign.pack(side=tk.TOP, pady=10)
@@ -94,15 +98,9 @@ class Configure(tk.Frame):
         frame1 = tk.Frame(self, width=1, height=1, bg="green", borderwidth=15)
         frame1.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 
-        # frame1 = tk.Frame(frame1, bg="khaki", borderwidth=15)
-        # frame1.pack(fill=tk.X)
-
-        # frame1 = tk.Frame(self, bg="green")
-        # frame1.pack(fill=tk.X)
-        # nested_frame
-
         label_hint_functional = ttk.Label(frame1, text="Функціональні:",
                                           style="HINT.TLabel")
+
         label_hint_functional.grid(row=0, column=0, pady=10, sticky=tk.W)
         glider_cb = tk.Checkbutton(frame1, text="Добавити глайдер ")
         glider_cb.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
@@ -114,7 +112,6 @@ class Configure(tk.Frame):
         label_view = ttk.Label(frame1, text="Відображення",
                                style="HINT.TLabel")
         label_view.grid(row=3, column=0, pady=(0, 10), sticky=tk.W)
-
         label_update = tk.Label(frame1, text="Швидкість оновлення ")
         label_update.grid(row=4, column=0, pady=(0, 5), sticky=tk.W)
         # test max value
@@ -122,6 +119,7 @@ class Configure(tk.Frame):
                                      to=5000, width=6)
         update_interval.grid(row=4, column=1, pady=(0, 5), padx=10,
                              sticky=tk.W)
+
         label_table_size = tk.Label(frame1, text="Величина таблиці")
         label_table_size.grid(row=5, column=0, pady=(0, 5), sticky=tk.W)
         # поставити обмеження на величину таблиці (у вигляді діалогового вікна)
@@ -130,9 +128,8 @@ class Configure(tk.Frame):
                               validatecommand=(vcmd, "%P"))
         size_entry.grid(row=5, column=1, pady=(0, 5), sticky=tk.W, padx=10)
 
-        random_cb = tk.Checkbutton(frame1,
-                                   text="Випадкове заповнення таблиці")
-        random_cb.grid(row=6, column=0, columnspan=2, pady=(15, 5),
+        random_fill_cb = tk.Checkbutton(frame1, text="Випадкове заповнення таблиці")
+        random_fill_cb.grid(row=6, column=0, columnspan=2, pady=(15, 5),
                        sticky=tk.W)
 
     def callback(self, p):
@@ -141,7 +138,7 @@ class Configure(tk.Frame):
         else:
             return False
 
-    def init_rigth_frame(self):
+    def init_right_frame(self):
         frame2 = tk.Frame(self, width=1, height=1, bg="yellow", borderwidth=15)
         frame2.pack(fill=tk.BOTH, side=tk.RIGHT, expand=True)
 
@@ -157,6 +154,7 @@ class Configure(tk.Frame):
                                            width=7)
         combobox_color_dead.grid(row=1, column=1, pady=(0, 5), padx=(15, 35),
                                  sticky=tk.W)
+
         alive_label = tk.Label(frame2, text="Колір живої клітини")
         alive_label.grid(row=2, column=0, pady=(0, 5), sticky=tk.W)
         combobox_color_alive = ttk.Combobox(frame2, values=[
@@ -165,15 +163,18 @@ class Configure(tk.Frame):
                                             width=7)
         combobox_color_alive.grid(row=2, column=1, pady=(0, 5), padx=(15, 35),
                                   sticky=tk.W)
-        view_markup_cb = tk.Checkbutton(frame2, text="Відображати сітку")
-        view_markup_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
+
+        show_markup_cb = tk.Checkbutton(frame2, text="Відображати сітку")
+        show_markup_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
 
         insert_random_button = tk.Button(frame2, text="Випадкові значення")
         insert_random_button.grid(row=4, column=0, pady=(65, 0), padx=(0, 20),
                                   columnspan=2)
+        # insert_random_button.bind()
         generate_button = tk.Button(frame2, text="Запустити")
         generate_button.grid(row=4, column=0, pady=(65, 0), padx=(20, 0),
                              sticky=tk.E, columnspan=2)
+        # generate_button.bind()
 
 
 class QuickStart(tk.Frame):
