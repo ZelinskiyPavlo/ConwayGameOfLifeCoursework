@@ -1,12 +1,9 @@
-# Python code to implement Conway's Game Of Life
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as Tk
 
-# from tkinter import *
 
 # setting up the values for the grid
 ON = 255
@@ -80,31 +77,13 @@ class ConwayGameOfLifeCore:
         frame_ref = self.controller.core_frame_ref()
 
         print("In core class")
-        # fig, ax = plt.subplots()
-        #
-        # canvas = FigureCanvasTkAgg(fig, master=controller)
-        # canvas.get_tk_widget().grid(column=0, row=1)
-        #
-        # img = ax.imshow(grid, interpolation='nearest')
-        # ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N,),
-        #                               frames=10,
-        #                               interval=updateInterval,
-        #                               save_count=50)
-
-        # # grid = self.normal_grid(grid_size)
-        # anim = [0]
-        # anim[0] = self.get_animation()
 
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
-        # self.grid = self.random_grid(100)
         canvas.get_tk_widget().grid(column=0, row=1)
         # self.grid_size = self.get_grid_size()
 
         self.grid_size = 10
-        # import welcomeWindow as gui
-        # self.anim = gui.gui_animation
-        # self.anim[0]
 
         self.grid = self.normal_grid(self.grid_size)
         # self.grid = self.random_grid(self.grid_size)
@@ -163,9 +142,7 @@ class ConwayGameOfLifeCore:
         grid[center + 1, center + 1] = 255
         grid[center + 2, center + 1] = 255
         grid[center + 1, center + 2] = 255
-
-
-        # grid[center + 10, center + 10] = 1
+        grid[center + 1, center + 3] = 255
         return grid
 
     def random_grid(self, size):
@@ -230,7 +207,6 @@ class ConwayGameOfLifeCore:
         else:
             return "white"
 
-# core = ConwayGameOfLifeCore()
 
 # All default values
 # 0
