@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import GameOfLife
 import matplotlib
+from random import randint, randrange, choice
 import matplotlib.animation as animation
 
 matplotlib.use("TkAgg")
@@ -31,6 +32,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        # змінні по замовчуванню будуть в самому ядрі
         self.configuration = {"glider": tk.IntVar(),
                               "glider_gun": tk.IntVar(),
                               "update_interval": tk.IntVar(),
@@ -39,9 +41,11 @@ class ConwayGameOfLifeGui(tk.Tk):
                               "color_dead": tk.StringVar(),
                               "color_alive": tk.StringVar(),
                               "show_markup": tk.IntVar()}
+        self.colors = ["white", "gray", "black", "blue", "red", "pink",
+                       "purple", "brown", "orange", "yellow", "green"]
         self.frames = {}  # pre-defined a dictionary
 
-        for F in (StartPage, Configure, QuickStart):
+        for F in (StartPage, Configure, QuickStart, ShowGame):
             frame = F(container, self)  # define the first frame
             self.frames[F] = frame  # list with all frames
             frame.grid(row=0, column=0, sticky="nsew")  # nsew mean north,south
@@ -53,7 +57,29 @@ class ConwayGameOfLifeGui(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]  # get StartPage class from frames dict.
         frame.tkraise()  # bring frame to the top
-# ____________________back-end(above)__________________________________________
+
+    # def run_configured(self):
+    #     # controller = self
+    #     core_class = self.init_core()
+
+    def run_random(self):
+        self.configuration["glider"].set(randint(0, 1))
+        self.configuration["glider_gun"].set(randint(0, 1))
+        self.configuration["update_interval"].set(randrange(200, 5000, 200))
+        self.configuration["table_size"].set(randrange(50, 350, 50))
+        self.configuration["random_fill"].set(randint(0, 1))
+        self.configuration["color_dead"].set(choice(self.colors))
+        self.configuration["color_alive"].set(choice(self.colors))
+        self.configuration["show_markup"].set(randint(0, 1))
+
+    def run_quick(self):
+        pass
+
+    def init_core(self):
+        controller = self
+        GameOfLife.ConwayGameOfLifeCore(controller)
+        # self.show_frame(ShowGame)
+        # return GameOfLife.ConwayGameOfLifeCore(controller)
 
 
 class StartPage(tk.Frame):
@@ -61,6 +87,7 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+
         label = ttk.Label(self, text="this is the start page", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
 
@@ -102,10 +129,14 @@ class Configure(tk.Frame):
                                           style="HINT.TLabel")
 
         label_hint_functional.grid(row=0, column=0, pady=10, sticky=tk.W)
-        glider_cb = tk.Checkbutton(frame1, text="Добавити глайдер ")
+        glider_cb = tk.Checkbutton(frame1, text="Добавити глайдер ",
+                                   variable=self.controller.configuration[
+                                       "glider"])
         glider_cb.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
         glider_gun_cb = tk.Checkbutton(frame1,
-                                       text="Добавити глайдерну гармату")
+                                       text="Добавити глайдерну гармату",
+                                       variable=self.controller.configuration[
+                                           "glider_gun"])
         glider_gun_cb.grid(row=2, column=0, columnspan=2, pady=(0, 15),
                            sticky=tk.W)
 
@@ -114,9 +145,14 @@ class Configure(tk.Frame):
         label_view.grid(row=3, column=0, pady=(0, 10), sticky=tk.W)
         label_update = tk.Label(frame1, text="Швидкість оновлення ")
         label_update.grid(row=4, column=0, pady=(0, 5), sticky=tk.W)
-        # test max value
-        update_interval = tk.Spinbox(frame1, increment=100, from_=100,
-                                     to=5000, width=6)
+
+        # set default value
+        self.controller.configuration["update_interval"].set(1200)
+        update_interval = tk.Spinbox(frame1, increment=200, from_=200,
+                                     to=5000, textvariable=
+                                     self.controller.configuration[
+                                         "update_interval"], width=6,
+                                     state="readonly")
         update_interval.grid(row=4, column=1, pady=(0, 5), padx=10,
                              sticky=tk.W)
 
@@ -125,12 +161,17 @@ class Configure(tk.Frame):
         # поставити обмеження на величину таблиці (у вигляді діалогового вікна)
         vcmd = (frame1.register(self.callback))
         size_entry = tk.Entry(frame1, width=5, validate="all",
-                              validatecommand=(vcmd, "%P"))
+                              validatecommand=(vcmd, "%P"),
+                              textvariable=self.controller.configuration[
+                                  "table_size"])
         size_entry.grid(row=5, column=1, pady=(0, 5), sticky=tk.W, padx=10)
 
-        random_fill_cb = tk.Checkbutton(frame1, text="Випадкове заповнення таблиці")
+        random_fill_cb = tk.Checkbutton(frame1,
+                                        text="Випадкове заповнення таблиці",
+                                        variable=self.controller.configuration[
+                                            "random_fill"])
         random_fill_cb.grid(row=6, column=0, columnspan=2, pady=(15, 5),
-                       sticky=tk.W)
+                            sticky=tk.W)
 
     def callback(self, p):
         if str.isdigit(p) or p == "":
@@ -148,30 +189,38 @@ class Configure(tk.Frame):
 
         dead_label = tk.Label(frame2, text="Колір мертвої клітини")
         dead_label.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
-        combobox_color_dead = ttk.Combobox(frame2, values=[
-            "white", "gray", "black", "blue", "red", "pink",
-            "purple", "brown", "orange", "yellow", "green"], state="readonly",
-                                           width=7)
+        combobox_color_dead = ttk.Combobox(frame2,
+                                           values=self.controller.colors,
+                                           state="readonly",
+                                           width=7, textvariable=
+                                           self.controller.configuration[
+                                               "color_dead"])
         combobox_color_dead.grid(row=1, column=1, pady=(0, 5), padx=(15, 35),
                                  sticky=tk.W)
 
         alive_label = tk.Label(frame2, text="Колір живої клітини")
         alive_label.grid(row=2, column=0, pady=(0, 5), sticky=tk.W)
-        combobox_color_alive = ttk.Combobox(frame2, values=[
-            "white", "gray", "black", "blue", "red", "pink",
-            "purple", "brown", "orange", "yellow", "green"], state="readonly",
-                                            width=7)
+        combobox_color_alive = ttk.Combobox(frame2,
+                                            values=self.controller.colors,
+                                            state="readonly",
+                                            width=7, textvariable=
+                                            self.controller.configuration[
+                                                "color_alive"])
         combobox_color_alive.grid(row=2, column=1, pady=(0, 5), padx=(15, 35),
                                   sticky=tk.W)
 
-        show_markup_cb = tk.Checkbutton(frame2, text="Відображати сітку")
+        show_markup_cb = tk.Checkbutton(frame2, text="Відображати сітку",
+                                        variable=self.controller.configuration[
+                                            "show_markup"])
         show_markup_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
 
-        insert_random_button = tk.Button(frame2, text="Випадкові значення")
+        insert_random_button = tk.Button(frame2, text="Випадкові значення",
+                                         command=self.controller.run_random)
         insert_random_button.grid(row=4, column=0, pady=(65, 0), padx=(0, 20),
                                   columnspan=2)
         # insert_random_button.bind()
-        generate_button = tk.Button(frame2, text="Запустити")
+        generate_button = tk.Button(frame2, text="Запустити",
+                                    command=self.controller.init_core)
         generate_button.grid(row=4, column=0, pady=(65, 0), padx=(20, 0),
                              sticky=tk.E, columnspan=2)
         # generate_button.bind()
@@ -194,6 +243,12 @@ class QuickStart(tk.Frame):
         # canvas.get_tk_widget().grid(column=0, row=1)
 
         # img = core_class.get_ax().imshow()
+
+
+class ShowGame(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
 
 
 app = ConwayGameOfLifeGui()
