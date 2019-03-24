@@ -2,72 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.widgets import Button, TextBox
+from matplotlib.widgets import Button
+import tkinter as tk
 
 # setting up the values for the grid
 ON = 255
 OFF = 0
 vals = [ON, OFF]
-
-
-# main() function
-# def main():
-#     # Command line args are in sys.argv[1], sys.argv[2] ..
-#     # sys.argv[0] is the script name itself and can be ignored
-#     # parse arguments
-#
-#     root = Tk.Tk()
-#
-#     parser = argparse.ArgumentParser(
-#         description="Runs Conway's Game of Life simulation.")
-#
-#     # add arguments
-#     parser.add_argument('--grid-size', dest='N', required=False)
-#     parser.add_argument('--mov-file', dest='movfile', required=False)
-#     parser.add_argument('--interval', dest='interval', required=False)
-#     parser.add_argument('--glider', action='store_true', required=False)
-#     parser.add_argument('--gosper', action='store_true', required=False)
-#     args = parser.parse_args()
-#
-#     # set grid size
-#     N = 100
-#     if args.N and int(args.N) > 8:
-#         N = int(args.N)
-#
-#     # set animation update interval
-#     updateInterval = 1200
-#     if args.interval:
-#         updateInterval = int(args.interval)
-#
-#     # declare grid
-#     grid = np.array([])
-#
-#     # check if "glider" demo flag is specified
-#     if args.glider:
-#         grid = np.zeros(N * N).reshape(N, N)
-#         addGlider(1, 1, grid)
-#     elif args.gosper:
-#         grid = np.zeros(N * N).reshape(N, N)
-#         addGosperGliderGun(10, 10, grid)
-#
-#     else:  # populate grid with random on/off -
-#         # more off than on
-#         grid = randomGrid(N)
-#
-#     # set up animation
-#
-#     fig, ax = plt.subplots()
-#
-#     canvas = FigureCanvasTkAgg(fig, master=root)
-#     canvas.get_tk_widget().grid(column=0, row=1)
-#
-#     img = ax.imshow(grid, interpolation='nearest')
-#     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N,),
-#                                   frames=10,
-#                                   interval=updateInterval,
-#                                   save_count=50)
-#     # plt.show()
-#     Tk.mainloop()
 
 
 class ConwayGameOfLifeCore:
@@ -77,21 +18,22 @@ class ConwayGameOfLifeCore:
 
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
-        canvas.get_tk_widget().grid(column=0, row=1)
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        # canvas.get_tk_widget().grid(column=0, row=0)
+        # TODO: як збільшити розмір канвасу, або зсунути графік вверх
 
         # setting values
         self.grid_size = 10
         # self.grid_size = self.get_grid_size()
         self.grid = self.normal_grid(self.grid_size)
         # self.grid = self.random_grid(self.grid_size)
-        # self.show_generation = 1
+        self.generation_text = None
+        self.start_value = 0
         self.show_generation = self.controller.configuration[
             "show_generation"].get()
-        # textbox_axes = plt.axes([])
 
-        # self.generation_text = self.ax.text(-3.0, -1.1, "Generation:0")
-        self.generation_text = self.ax.text(-3.0, -1.1, "")
-        self.start_value = 0
+        # TODO: add goto start button with deleting dictionary on left side
+
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
         self.anim = animation.FuncAnimation(self.fig, self.update,
                                             fargs=(
@@ -100,10 +42,10 @@ class ConwayGameOfLifeCore:
                                             frames=10,
                                             interval=1200,
                                             save_count=50)
+        self.init_matplot_gui()
 
     def update(self, frame_num, img, grid, grid_size):
-        newGrid = grid.copy()
-
+        new_grid = grid.copy()
         if self.show_generation:
             self.generation_text.set_text(
                 "Generation:{}".format(self.start_value))
@@ -125,14 +67,14 @@ class ConwayGameOfLifeCore:
 
                 if grid[i, j] == ON:
                     if (total < 2) or (total > 3):
-                        newGrid[i, j] = OFF
+                        new_grid[i, j] = OFF
                 else:
                     if total == 3:
-                        newGrid[i, j] = ON
+                        new_grid[i, j] = ON
 
                     # update data
-        img.set_data(newGrid)
-        grid[:] = newGrid[:]
+        img.set_data(new_grid)
+        grid[:] = new_grid[:]
         return img,
 
     # MERGE TWO METHODS
@@ -151,6 +93,24 @@ class ConwayGameOfLifeCore:
         """returns a grid of NxN random values"""
         return np.random.choice(vals, size * size, p=[0.2, 0.8]).reshape(size,
                                                                          size)
+
+    def init_matplot_gui(self):
+        self.generation_text = self.ax.text(-3.0, -1.1, "")
+
+        # self.button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
+        # button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
+        button_stop_axes = plt.axes([0.78, 0.01, 0.1, 0.075])
+        # self.button_start = Button(button_start_axes, "Start",
+        #                            color="skyblue",
+        #                            hovercolor='0.975')
+        # self.button_start.on_clicked(self.anim.event_source.start)
+        # self.button_start.on_clicked(
+        #     lambda *args: self.anim.event_source.start())
+        self.button_stop = Button(button_stop_axes, "Stop",
+                                  color="skyblue",
+                                  hovercolor='0.975')
+        self.button_stop.on_clicked(
+            lambda *args: self.anim.event_source.stop())
 
     def add_glider(self, i, j, grid):
         """adds a glider with top left cell at (i, j)"""
@@ -208,13 +168,3 @@ class ConwayGameOfLifeCore:
             return self.controller.configuration["color_alive"].get()
         else:
             return "white"
-
-# All default values
-# 0
-# 0
-# 1200
-# 0
-# 0
-#   color_dead
-#   color_alive
-# 0
