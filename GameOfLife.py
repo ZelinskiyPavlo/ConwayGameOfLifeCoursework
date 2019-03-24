@@ -19,21 +19,25 @@ class ConwayGameOfLifeCore:
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        # canvas.get_tk_widget().grid(column=0, row=0)
         # TODO: як збільшити розмір канвасу, або зсунути графік вверх
+        # TODO: add goto start button with deleting dictionary on left side
 
-        # setting values
-        self.grid_size = 10
+        # getting values from controller dictionary
+        self.grid_size = self.get_grid_size()
         self.random_fill = self.controller.configuration["random_fill"].get()
-        # self.grid_size = self.get_grid_size()
         self.grid = self.create_grid(self.grid_size)
-        # self.grid = self.random_grid(self.grid_size)
-        self.generation_text = None
-        self.start_value = 0
+        self.update_interval = self.controller.configuration[
+            "update_interval"].get()
         self.show_generation = self.controller.configuration[
             "show_generation"].get()
+        # self.color_dead = self.get_color_dead()
+        # self.color_alive = self.get_color_alive()
 
-        # TODO: add goto start button with deleting dictionary on left side
+        # setting values for matPlot needs
+        self.start_value = 0
+        self.generation_text = None
+        self.button_stop = None
+        self.button_start = None
 
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
         plt.axis("off")
@@ -42,16 +46,19 @@ class ConwayGameOfLifeCore:
                                                 self.img, self.grid,
                                                 self.grid_size,),
                                             frames=10,
-                                            interval=1200,
+                                            interval=self.update_interval,
                                             save_count=50)
         self.init_matplot_gui()
 
     def update(self, frame_num, img, grid, grid_size):
+        """Updates grid, show number of generation, using in animation func """
         new_grid = grid.copy()
+
         if self.show_generation:
             self.generation_text.set_text(
                 "Generation:{}".format(self.start_value))
             self.start_value += 1
+
         for i in range(grid_size):
             for j in range(grid_size):
 
@@ -74,7 +81,7 @@ class ConwayGameOfLifeCore:
                     if total == 3:
                         new_grid[i, j] = ON
 
-                    # update data
+        # update data
         img.set_data(new_grid)
         grid[:] = new_grid[:]
         return img,
@@ -82,7 +89,7 @@ class ConwayGameOfLifeCore:
     def create_grid(self, size):
         """Generate grid array depending on bool value from dict"""
         if self.random_fill:
-            return np.random.choice(vals, size * size, p=[0.2, 0.8]).\
+            return np.random.choice(vals, size * size, p=[0.2, 0.8]). \
                 reshape(size, size)
         else:
             grid = np.zeros(size * size).reshape(size, size)
@@ -96,6 +103,7 @@ class ConwayGameOfLifeCore:
             return grid
 
     def init_matplot_gui(self):
+        """Generate text and 3 button widgets"""
         self.generation_text = self.ax.text(-3.0, -1.1, "")
 
         # button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
