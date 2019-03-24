@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import tkinter as Tk
-
+from matplotlib.widgets import Button, TextBox
 
 # setting up the values for the grid
 ON = 255
 OFF = 0
 vals = [ON, OFF]
+
 
 # main() function
 # def main():
@@ -75,16 +75,23 @@ class ConwayGameOfLifeCore:
         self.controller = controller
         frame_ref = self.controller.core_frame_ref()
 
-        print("In core class")
-
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
         canvas.get_tk_widget().grid(column=0, row=1)
-        # self.grid_size = self.get_grid_size()
 
+        # setting values
         self.grid_size = 10
+        # self.grid_size = self.get_grid_size()
         self.grid = self.normal_grid(self.grid_size)
         # self.grid = self.random_grid(self.grid_size)
+        # self.show_generation = 1
+        self.show_generation = self.controller.configuration[
+            "show_generation"].get()
+        # textbox_axes = plt.axes([])
+
+        # self.generation_text = self.ax.text(-3.0, -1.1, "Generation:0")
+        self.generation_text = self.ax.text(-3.0, -1.1, "")
+        self.start_value = 0
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
         self.anim = animation.FuncAnimation(self.fig, self.update,
                                             fargs=(
@@ -95,16 +102,15 @@ class ConwayGameOfLifeCore:
                                             save_count=50)
 
     def update(self, frame_num, img, grid, grid_size):
-        # copy grid since we require 8 neighbors
-        # for calculation and we go line by line
-        print("In update func")
         newGrid = grid.copy()
+
+        if self.show_generation:
+            self.generation_text.set_text(
+                "Generation:{}".format(self.start_value))
+            self.start_value += 1
         for i in range(grid_size):
             for j in range(grid_size):
 
-                # compute 8-neghbor sum
-                # using toroidal boundary conditions - x and y wrap around
-                # so that the simulaton takes place on a toroidal surface.
                 total = int((grid[i, (j - 1) % grid_size] + grid[
                     i, (j + 1) % grid_size] +
                              grid[(i - 1) % grid_size, j] + grid[
@@ -115,9 +121,8 @@ class ConwayGameOfLifeCore:
                              grid[(i + 1) % grid_size, (j - 1) % grid_size] +
                              grid[
                                  (i + 1) % grid_size, (
-                                             j + 1) % grid_size]) / 255)
+                                         j + 1) % grid_size]) / 255)
 
-                # apply Conway's rules
                 if grid[i, j] == ON:
                     if (total < 2) or (total > 3):
                         newGrid[i, j] = OFF
@@ -136,11 +141,10 @@ class ConwayGameOfLifeCore:
         center = int(size / 5) + 2
         grid[center, center] = 255
         grid[center + 1, center] = 255
-        grid[center, center + 1] = 255
-        grid[center + 1, center + 1] = 255
-        grid[center + 2, center + 1] = 255
-        grid[center + 1, center + 2] = 255
-        # grid[center + 1, center + 3] = 255
+        grid[center + 2, center] = 255
+        grid[center, center - 1] = 255
+        grid[center - 1, center - 1] = 255
+        grid[center - 2, center - 1] = 255
         return grid
 
     def random_grid(self, size):
@@ -204,7 +208,6 @@ class ConwayGameOfLifeCore:
             return self.controller.configuration["color_alive"].get()
         else:
             return "white"
-
 
 # All default values
 # 0
