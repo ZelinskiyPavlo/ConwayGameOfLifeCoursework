@@ -18,9 +18,10 @@ class ConwayGameOfLifeGui(tk.Tk):
         # arguments(typical param)(args) and
         # keyworded arguments(dictionaries)(kwargs)
         tk.Tk.__init__(self, *args, **kwargs)  # init inherited class
-        tk.Tk.wm_title(self, "Custom Title")
+        # tk.Tk.wm_title(self, "Custom Title")
+        tk.Tk.wm_title(self, "\"Гра життя\", Джона Конвея")
         container = tk.Frame(self)
-        self.geometry("550x350+300+300")
+        # self.geometry("550x350+300+300")
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -44,22 +45,22 @@ class ConwayGameOfLifeGui(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")  # nsew mean north,south
             # place frame in(0,0)pos. in grid#nsew make frame fill entire space
 
-        # self.show_frame(StartPage)
-        self.show_frame(Configure)
+        self.show_frame(StartPage)
+        # self.show_frame(Configure)
 
     def show_frame(self, cont):
+        for frame in self.frames.values():
+            frame.grid_remove()
         frame = self.frames[cont]  # get StartPage class from frames dict.
-        frame.tkraise()  # bring frame to the top
+        # frame.tkraise()  # bring frame to the top
+        frame.grid()
+        frame.winfo_toplevel().geometry("")
 
     def get_ref(self, cont):
         return self.frames[cont]
 
     def core_frame_ref(self):
         return self.frames[ShowGame]
-
-    # def run_configured(self):
-    #     # controller = self
-    #     core_class = self.init_core()
 
     def run_random(self):
         self.configuration["glider"].set(randint(0, 1))
@@ -78,7 +79,6 @@ class ConwayGameOfLifeGui(tk.Tk):
         controller = self
         core_class = GameOfLife.ConwayGameOfLifeCore(controller)
         self.show_frame(ShowGame)
-        # return GameOfLife.ConwayGameOfLifeCore(controller)
 
 
 class StartPage(tk.Frame):
@@ -86,16 +86,28 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        # tk.Frame.winfo_toplevel(self).geometry("700x400+300+300")
+        label = ttk.Label(self,
+                          text="Вітаю. Ви щойно відкрили програму яка "
+                               "симулює \"Гру життя\" Джона Конвея. \nЦю "
+                               "програму написав Зелінський Павло, студент "
+                               "ПМ-2, в якості курсової роботи. \n"
+                               "Натисність кнопку \"Налаштувати гру\" для "
+                               "того щоб вибрати запропоновані налаштування.\n"
+                               "І кнопку \"Швидкий старт\" для того щоб "
+                               "запустити гру з параметрами по замовчуванню.",
+                          font=LARGE_FONT)
+        label.grid(row=0, column=0, columnspan=10, pady=40, padx=40)
 
-        label = ttk.Label(self, text="this is the start page", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
-
-        button = ttk.Button(self, text="Configure",
-                            command=lambda: controller.show_frame(Configure))
-        button.pack()
-        button2 = ttk.Button(self, text="Quick start",
-                             command=self.controller.init_core)
-        button2.pack()
+        configure_button = ttk.Button(self, text="Налаштувати гру",
+                                      command=lambda: controller.show_frame(
+                                          Configure))
+        configure_button.grid(row=1, column=4, padx=(0, 5), pady=(0, 30),
+                              sticky=tk.E)
+        start_button = ttk.Button(self, text=" Швидкий старт ",
+                                  command=self.controller.init_core)
+        start_button.grid(row=1, column=5, padx=(5, 0), pady=(0, 30),
+                          sticky=tk.W)
 
 
 class Configure(tk.Frame):
@@ -103,6 +115,7 @@ class Configure(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         tk.Frame.configure(self, bg="red")
+        # tk.Frame.winfo_toplevel(self).geometry("550x350+300+300")
 
         ttk.Style().configure("HINT.TLabel", foreground="grey",
                               font=HINT_FONT)
@@ -157,7 +170,7 @@ class Configure(tk.Frame):
         label_grid_size = tk.Label(frame1, text="Величина таблиці")
         label_grid_size.grid(row=5, column=0, pady=(0, 5), sticky=tk.W)
         # поставити обмеження на величину таблиці (у вигляді діалогового вікна)
-        vcmd = (frame1.register(self.callback))
+        vcmd = (frame1.register(self.entry_callback))
         size_entry = tk.Entry(frame1, width=5, validate="all",
                               validatecommand=(vcmd, "%P"),
                               textvariable=self.controller.configuration[
@@ -171,7 +184,7 @@ class Configure(tk.Frame):
         random_fill_cb.grid(row=6, column=0, columnspan=2, pady=(15, 5),
                             sticky=tk.W)
 
-    def callback(self, p):
+    def entry_callback(self, p):
         if str.isdigit(p) or p == "":
             return True
         else:
@@ -216,12 +229,10 @@ class Configure(tk.Frame):
                                          command=self.controller.run_random)
         insert_random_button.grid(row=4, column=0, pady=(65, 0), padx=(0, 20),
                                   columnspan=2)
-        # insert_random_button.bind()
         generate_button = tk.Button(frame2, text="Запустити",
                                     command=self.controller.init_core)
         generate_button.grid(row=4, column=0, pady=(65, 0), padx=(20, 0),
                              sticky=tk.E, columnspan=2)
-        # generate_button.bind()
 
 
 class ShowGame(tk.Frame):

@@ -10,7 +10,6 @@ ON = 255
 OFF = 0
 vals = [ON, OFF]
 
-
 # main() function
 # def main():
 #     # Command line args are in sys.argv[1], sys.argv[2] ..
@@ -84,7 +83,6 @@ class ConwayGameOfLifeCore:
         # self.grid_size = self.get_grid_size()
 
         self.grid_size = 10
-
         self.grid = self.normal_grid(self.grid_size)
         # self.grid = self.random_grid(self.grid_size)
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
@@ -96,7 +94,7 @@ class ConwayGameOfLifeCore:
                                             interval=1200,
                                             save_count=50)
 
-    def update(self, frameNum, img, grid, grid_size):
+    def update(self, frame_num, img, grid, grid_size):
         # copy grid since we require 8 neighbors
         # for calculation and we go line by line
         print("In update func")
@@ -142,7 +140,7 @@ class ConwayGameOfLifeCore:
         grid[center + 1, center + 1] = 255
         grid[center + 2, center + 1] = 255
         grid[center + 1, center + 2] = 255
-        grid[center + 1, center + 3] = 255
+        # grid[center + 1, center + 3] = 255
         return grid
 
     def random_grid(self, size):
