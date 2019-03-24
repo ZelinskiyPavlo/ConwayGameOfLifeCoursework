@@ -24,8 +24,9 @@ class ConwayGameOfLifeCore:
 
         # setting values
         self.grid_size = 10
+        self.random_fill = self.controller.configuration["random_fill"].get()
         # self.grid_size = self.get_grid_size()
-        self.grid = self.normal_grid(self.grid_size)
+        self.grid = self.create_grid(self.grid_size)
         # self.grid = self.random_grid(self.grid_size)
         self.generation_text = None
         self.start_value = 0
@@ -35,6 +36,7 @@ class ConwayGameOfLifeCore:
         # TODO: add goto start button with deleting dictionary on left side
 
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
+        plt.axis("off")
         self.anim = animation.FuncAnimation(self.fig, self.update,
                                             fargs=(
                                                 self.img, self.grid,
@@ -77,27 +79,25 @@ class ConwayGameOfLifeCore:
         grid[:] = new_grid[:]
         return img,
 
-    # MERGE TWO METHODS
-    def normal_grid(self, size):
-        grid = np.zeros(size * size).reshape(size, size)
-        center = int(size / 5) + 2
-        grid[center, center] = 255
-        grid[center + 1, center] = 255
-        grid[center + 2, center] = 255
-        grid[center, center - 1] = 255
-        grid[center - 1, center - 1] = 255
-        grid[center - 2, center - 1] = 255
-        return grid
-
-    def random_grid(self, size):
-        """returns a grid of NxN random values"""
-        return np.random.choice(vals, size * size, p=[0.2, 0.8]).reshape(size,
-                                                                         size)
+    def create_grid(self, size):
+        """Generate grid array depending on bool value from dict"""
+        if self.random_fill:
+            return np.random.choice(vals, size * size, p=[0.2, 0.8]).\
+                reshape(size, size)
+        else:
+            grid = np.zeros(size * size).reshape(size, size)
+            center = int(size / 5) + 2
+            grid[center, center] = 255
+            grid[center + 1, center] = 255
+            grid[center + 2, center] = 255
+            grid[center, center - 1] = 255
+            grid[center - 1, center - 1] = 255
+            grid[center - 2, center - 1] = 255
+            return grid
 
     def init_matplot_gui(self):
         self.generation_text = self.ax.text(-3.0, -1.1, "")
 
-        # self.button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
         # button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
         button_stop_axes = plt.axes([0.78, 0.01, 0.1, 0.075])
         # self.button_start = Button(button_start_axes, "Start",
