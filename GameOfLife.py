@@ -41,6 +41,7 @@ class ConwayGameOfLifeCore:
 
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
         plt.axis("off")
+        self.init_matplot_gui()
         self.anim = animation.FuncAnimation(self.fig, self.update,
                                             fargs=(
                                                 self.img, self.grid,
@@ -48,7 +49,6 @@ class ConwayGameOfLifeCore:
                                             frames=10,
                                             interval=self.update_interval,
                                             save_count=50)
-        self.init_matplot_gui()
 
     def update(self, frame_num, img, grid, grid_size):
         """Updates grid, show number of generation, using in animation func """
@@ -106,19 +106,18 @@ class ConwayGameOfLifeCore:
         """Generate text and 3 button widgets"""
         self.generation_text = self.ax.text(-3.0, -1.1, "")
 
-        # button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
         button_stop_axes = plt.axes([0.78, 0.01, 0.1, 0.075])
-        # self.button_start = Button(button_start_axes, "Start",
-        #                            color="skyblue",
-        #                            hovercolor='0.975')
-        # self.button_start.on_clicked(self.anim.event_source.start)
-        # self.button_start.on_clicked(
-        #     lambda *args: self.anim.event_source.start())
         self.button_stop = Button(button_stop_axes, "Stop",
                                   color="skyblue",
                                   hovercolor='0.975')
         self.button_stop.on_clicked(
             lambda *args: self.anim.event_source.stop())
+        button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
+        self.button_start = Button(button_start_axes, "Start",
+                                   color="skyblue",
+                                   hovercolor='0.975')
+        self.button_start.on_clicked(
+            lambda *args: self.anim.event_source.start())
 
     def add_glider(self, i, j, grid):
         """adds a glider with top left cell at (i, j)"""
