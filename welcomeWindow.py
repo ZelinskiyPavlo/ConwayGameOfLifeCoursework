@@ -157,7 +157,7 @@ class Configure(tk.Frame):
         label_update = tk.Label(frame1, text="Швидкість оновлення ")
         label_update.grid(row=4, column=0, pady=(0, 5), sticky=tk.W)
         # set default value
-        self.controller.configuration["update_interval"].set(1200)
+        self.controller.configuration["update_interval"].set(600)
         update_interval = tk.Spinbox(frame1, increment=200, from_=200,
                                      to=5000,
                                      textvariable=self.controller.
@@ -168,7 +168,7 @@ class Configure(tk.Frame):
 
         label_grid_size = tk.Label(frame1, text="Величина таблиці")
         label_grid_size.grid(row=5, column=0, pady=(0, 5), sticky=tk.W)
-        # TODO: поставити обмеження на величину таблиці (діалогове вікно)
+        
         vcmd = (frame1.register(self.entry_callback))
         size_entry = tk.Entry(frame1, width=5, validate="all",
                               validatecommand=(vcmd, "%P"),
@@ -226,9 +226,8 @@ class Configure(tk.Frame):
 
         show_generation_cb = tk.Checkbutton(frame2,
                                             text="Відображати номер генерації",
-                                            variable=
-                                            self.controller.configuration[
-                                                "show_generation"])
+                                            variable=self.controller.
+                                            configuration["show_generation"])
         show_generation_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
 
         insert_random_button = ttk.Button(frame2, text="Випадкові значення",

@@ -19,7 +19,6 @@ class ConwayGameOfLifeCore:
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        # TODO: як збільшити розмір канвасу, або зсунути графік вверх
         # TODO: add goto start button with deleting dictionary on left side
 
         # getting values from controller dictionary
@@ -93,7 +92,7 @@ class ConwayGameOfLifeCore:
                 reshape(size, size)
         else:
             grid = np.zeros(size * size).reshape(size, size)
-            center = int(size / 5) + 2
+            center = int(size / 2)
             grid[center, center] = 255
             grid[center + 1, center] = 255
             grid[center + 2, center] = 255
@@ -162,7 +161,7 @@ class ConwayGameOfLifeCore:
         if self.controller.configuration["grid_size"].get() != 0:
             return self.controller.configuration["grid_size"].get()
         else:
-            return 100
+            return 50
 
     def get_color_dead(self):
         if self.controller.configuration["color_dead"].get() != "":
