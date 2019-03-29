@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 import GameOfLife
 from random import randint, randrange, choice
@@ -48,6 +49,8 @@ class ConwayGameOfLifeGui(tk.Tk):
     def init_core(self):
         """Create an instance of GameOfLifeCore and show it on frame"""
         controller = self
+        if self.check_entry():
+            return
         GameOfLife.ConwayGameOfLifeCore(controller)
         self.show_frame(ShowGame)
 
@@ -63,6 +66,15 @@ class ConwayGameOfLifeGui(tk.Tk):
         self.configuration["color_dead"].set(choice(self.colors))
         self.configuration["color_alive"].set(choice(self.colors))
         self.configuration["show_generation"].set(randint(0, 1))
+
+    def check_entry(self):
+        if (self.configuration["grid_size"].get() > 150
+            or self.configuration["grid_size"].get() < 20) \
+                and self.configuration["grid_size"].get() != 0:
+            messagebox.showinfo("Увага", "Для коректної роботи програми "
+                                         "виберіть розмір сітки в "
+                                         "межах від 50 до 150.")
+            return True
 
 
 class StartPage(tk.Frame):
