@@ -59,7 +59,7 @@ class ConwayGameOfLifeCore:
 
         if self.show_generation:
             self.generation_text.set_text(
-                "Generation:{}".format(self.start_value))
+                "Генерація:{}".format(self.start_value))
             self.start_value += 1
 
         for i in range(grid_size):
@@ -107,16 +107,16 @@ class ConwayGameOfLifeCore:
 
     def init_matplot_gui(self):
         """Generate text and 3 button widgets"""
-        self.generation_text = self.ax.text(-3.0, -1.1, "")
+        self.generation_text = self.ax.text(-2.2, -1.1, "")
 
         button_stop_axes = plt.axes([0.78, 0.01, 0.1, 0.075])
-        self.button_stop = Button(button_stop_axes, "Stop",
+        self.button_stop = Button(button_stop_axes, "Стоп",
                                   color="skyblue",
                                   hovercolor='0.975')
         self.button_stop.on_clicked(
             lambda *args: self.anim.event_source.stop())
         button_start_axes = plt.axes([0.89, 0.01, 0.1, 0.075])
-        self.button_start = Button(button_start_axes, "Start",
+        self.button_start = Button(button_start_axes, "Старт",
                                    color="skyblue",
                                    hovercolor='0.975')
         self.button_start.on_clicked(

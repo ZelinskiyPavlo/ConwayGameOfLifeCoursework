@@ -169,7 +169,7 @@ class Configure(tk.Frame):
 
         label_grid_size = tk.Label(frame1, text="Величина таблиці")
         label_grid_size.grid(row=5, column=0, pady=(0, 5), sticky=tk.W)
-        
+
         vcmd = (frame1.register(self.entry_callback))
         size_entry = tk.Entry(frame1, width=5, validate="all",
                               validatecommand=(vcmd, "%P"),
@@ -202,7 +202,7 @@ class Configure(tk.Frame):
         label_hint_cosmetic.grid(row=0, column=0, pady=10, sticky=tk.W)
 
         dead_label = tk.Label(frame2, text="Колір мертвої клітини")
-        dead_label.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
+        dead_label.grid(row=1, column=0, pady=(0, 11), sticky=tk.W)
 
         combobox_color_dead = ttk.Combobox(frame2,
                                            values=self.controller.colors,
@@ -210,11 +210,11 @@ class Configure(tk.Frame):
                                            width=7,
                                            textvariable=self.controller.
                                            configuration["color_dead"])
-        combobox_color_dead.grid(row=1, column=1, pady=(0, 5), padx=(15, 35),
+        combobox_color_dead.grid(row=1, column=1, pady=(0, 11), padx=(15, 35),
                                  sticky=tk.W)
 
         alive_label = tk.Label(frame2, text="Колір живої клітини")
-        alive_label.grid(row=2, column=0, pady=(0, 5), sticky=tk.W)
+        alive_label.grid(row=2, column=0, pady=(0, 15), sticky=tk.W)
 
         combobox_color_alive = ttk.Combobox(frame2,
                                             values=self.controller.colors,
@@ -222,14 +222,14 @@ class Configure(tk.Frame):
                                             width=7,
                                             textvariable=self.controller.
                                             configuration["color_alive"])
-        combobox_color_alive.grid(row=2, column=1, pady=(0, 5), padx=(15, 35),
+        combobox_color_alive.grid(row=2, column=1, pady=(0, 15), padx=(15, 35),
                                   sticky=tk.W)
 
         show_generation_cb = tk.Checkbutton(frame2,
                                             text="Відображати номер генерації",
                                             variable=self.controller.
                                             configuration["show_generation"])
-        show_generation_cb.grid(row=3, column=0, pady=(15, 5), sticky=tk.W)
+        show_generation_cb.grid(row=3, column=0, pady=(0, 5), sticky=tk.W)
 
         insert_random_button = ttk.Button(frame2, text="Випадкові значення",
                                           command=self.controller.run_random)
