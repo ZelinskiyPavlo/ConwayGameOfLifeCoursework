@@ -121,12 +121,12 @@ class ConwayGameOfLifeCore:
                                    hovercolor='0.975')
         self.button_start.on_clicked(
             lambda *args: self.anim.event_source.start())
-        button_home_axes = plt.axes([0.01, 0.01, 0.15, 0.075])
-        self.button_home = Button(button_home_axes, "На початок",
-                                  color="skyblue",
-                                  hovercolor='0.975')
-        self.button_home.on_clicked(
-            lambda *args: self.controller.restart_game())
+        # button_home_axes = plt.axes([0.01, 0.01, 0.15, 0.075])
+        # self.button_home = Button(button_home_axes, "На початок",
+        #                           color="skyblue",
+        #                           hovercolor='0.975')
+        # self.button_home.on_clicked(
+        #     lambda *args: self.controller.restart_game())
 
     def add_glider(self, grid, size):
         """adds a glider in top left and bottom right side of grid"""
