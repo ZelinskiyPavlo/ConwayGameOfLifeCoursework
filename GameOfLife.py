@@ -25,6 +25,10 @@ class ConwayGameOfLifeCore:
         self.grid_size = self.get_grid_size()
         self.random_fill = self.controller.configuration["random_fill"].get()
         self.grid = self.create_grid(self.grid_size)
+
+        self.add_glider(self.grid, self.grid_size)
+        self.add_oscillator(self.grid, self.grid_size)
+
         self.update_interval = self.controller.configuration[
             "update_interval"].get()
         self.show_generation = self.controller.configuration[
@@ -118,43 +122,29 @@ class ConwayGameOfLifeCore:
         self.button_start.on_clicked(
             lambda *args: self.anim.event_source.start())
 
-    def add_glider(self, i, j, grid):
-        """adds a glider with top left cell at (i, j)"""
-        pass
-        # glider = np.array([[0, 0, 255],
-        #                    [255, 0, 255],
-        #                    [0, 255, 255]])
-        # grid[i:i + 3, j:j + 3] = glider
+    def add_glider(self, grid, size):
+        """adds a glider in top left and bottom right side of grid"""
+        if self.controller.configuration["glider"].get() == 1:
+            i = 1
+            glider = np.array([[0, 0, 255],
+                               [255, 0, 255],
+                               [0, 255, 255]])
+            grid[i:i + 3, i:i + 3] = glider
+            i = size - 4
+            glider = np.array([[255, 255, 0],
+                               [255, 0, 255],
+                               [255, 0, 0]])
+            grid[i:i + 3, i:i + 3] = glider
 
-    def add_gosper_glider_gun(self, i, j, grid):
-        """adds a Gosper Glider Gun with top left
-        cell at (i, j)"""
-        pass
-        # gun = np.zeros(11 * 38).reshape(11, 38)
-        #
-        # gun[5][1] = gun[5][2] = 255
-        # gun[6][1] = gun[6][2] = 255
-        #
-        # gun[3][13] = gun[3][14] = 255
-        # gun[4][12] = gun[4][16] = 255
-        # gun[5][11] = gun[5][17] = 255
-        # gun[6][11] = gun[6][15] = gun[6][17] = gun[6][18] = 255
-        # gun[7][11] = gun[7][17] = 255
-        # gun[8][12] = gun[8][16] = 255
-        # gun[9][13] = gun[9][14] = 255
-        #
-        # gun[1][25] = 255
-        # gun[2][23] = gun[2][25] = 255
-        # gun[3][21] = gun[3][22] = 255
-        # gun[4][21] = gun[4][22] = 255
-        # gun[5][21] = gun[5][22] = 255
-        # gun[6][23] = gun[6][25] = 255
-        # gun[7][25] = 255
-        #
-        # gun[3][35] = gun[3][36] = 255
-        # gun[4][35] = gun[4][36] = 255
-        #
-        # grid[i:i + 11, j:j + 38] = gun
+    def add_oscillator(self, grid, size):
+        """adds pentadecathlon oscillator in bottom section"""
+        if self.controller.configuration["oscillator"].get() == 1:
+            x = size - 7
+            y = int(size / 2) - int(size / 10)
+            gun = np.array([[0, 0, 255, 0, 0, 0, 0, 255, 0, 0],
+                            [255, 255, 0, 255, 255, 255, 255, 0, 255, 255],
+                            [0, 0, 255, 0, 0, 0, 0, 255, 0, 0]])
+            grid[x:x + 3, y:y + 10] = gun
 
     # get dict values (if not specified set default values)
     def get_grid_size(self):

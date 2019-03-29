@@ -18,7 +18,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.configuration = {"glider": tk.IntVar(),
-                              "glider_gun": tk.IntVar(),
+                              "oscillator": tk.IntVar(),
                               "update_interval": tk.IntVar(),
                               "grid_size": tk.IntVar(),
                               "random_fill": tk.IntVar(),
@@ -59,7 +59,7 @@ class ConwayGameOfLifeGui(tk.Tk):
 
     def run_random(self):
         self.configuration["glider"].set(randint(0, 1))
-        self.configuration["glider_gun"].set(randint(0, 1))
+        self.configuration["oscillator"].set(randint(0, 1))
         self.configuration["update_interval"].set(randrange(200, 5000, 200))
         self.configuration["grid_size"].set(randrange(50, 150, 50))
         self.configuration["random_fill"].set(randint(0, 1))
@@ -143,11 +143,12 @@ class Configure(tk.Frame):
                                        "glider"])
         glider_cb.grid(row=1, column=0, pady=(0, 5), sticky=tk.W)
 
-        glider_gun_cb = tk.Checkbutton(frame1,
-                                       text="Добавити глайдерну гармату",
+        oscillator_cb = tk.Checkbutton(frame1,
+                                       text="Добавити осцилятор, фігуру яка "
+                                            "повторюється",
                                        variable=self.controller.configuration[
-                                           "glider_gun"])
-        glider_gun_cb.grid(row=2, column=0, columnspan=2, pady=(0, 15),
+                                           "oscillator"])
+        oscillator_cb.grid(row=2, column=0, columnspan=3, pady=(0, 15),
                            sticky=tk.W)
 
         label_view = ttk.Label(frame1, text="Відображення:",
