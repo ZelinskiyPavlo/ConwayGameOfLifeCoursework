@@ -76,6 +76,9 @@ class ConwayGameOfLifeGui(tk.Tk):
                                          "межах від 50 до 150.")
             return True
 
+    def restart_game(self):
+        pass
+
 
 class StartPage(tk.Frame):
 

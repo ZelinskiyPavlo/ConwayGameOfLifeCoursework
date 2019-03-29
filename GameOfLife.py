@@ -19,7 +19,6 @@ class ConwayGameOfLifeCore:
         self.fig, self.ax = plt.subplots()
         canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        # TODO: add goto start button with deleting dictionary on left side
 
         # getting values from controller dictionary
         self.grid_size = self.get_grid_size()
@@ -41,6 +40,7 @@ class ConwayGameOfLifeCore:
         self.generation_text = None
         self.button_stop = None
         self.button_start = None
+        self.button_home = None
 
         self.img = self.ax.imshow(self.grid, interpolation='nearest')
         plt.axis("off")
@@ -107,7 +107,7 @@ class ConwayGameOfLifeCore:
 
     def init_matplot_gui(self):
         """Generate text and 3 button widgets"""
-        self.generation_text = self.ax.text(-2.2, -1.1, "")
+        self.generation_text = self.ax.text(-0.7, -1.1, "")
 
         button_stop_axes = plt.axes([0.78, 0.01, 0.1, 0.075])
         self.button_stop = Button(button_stop_axes, "Стоп",
@@ -121,6 +121,12 @@ class ConwayGameOfLifeCore:
                                    hovercolor='0.975')
         self.button_start.on_clicked(
             lambda *args: self.anim.event_source.start())
+        button_home_axes = plt.axes([0.01, 0.01, 0.15, 0.075])
+        self.button_home = Button(button_home_axes, "На початок",
+                                  color="skyblue",
+                                  hovercolor='0.975')
+        self.button_home.on_clicked(
+            lambda *args: self.controller.restart_game())
 
     def add_glider(self, grid, size):
         """adds a glider in top left and bottom right side of grid"""
