@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-import GameOfLife
+import Core
 from random import randint, randrange, choice
 
 LARGE_FONT = ("Verdana", 12)
 HINT_FONT = ("Verdana", 7)
 
 
-class ConwayGameOfLifeGui(tk.Tk):
+class ConwayGameOfLife(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self, "\"Гра життя\", Джона Конвея")
@@ -51,7 +51,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         controller = self
         if self.check_entry():
             return
-        GameOfLife.ConwayGameOfLifeCore(controller)
+        Core.ConwayGameOfLifeCore(controller)
         self.show_frame(ShowGame)
 
     def core_frame_ref(self):
@@ -266,5 +266,5 @@ class ShowGame(tk.Frame):
         self.controller = controller
 
 
-app = ConwayGameOfLifeGui()
+app = ConwayGameOfLife()
 app.mainloop()
