@@ -58,6 +58,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         return self.frames[ShowGame]
 
     def run_random(self):
+        """Set random values in dictionary"""
         self.configuration["glider"].set(randint(0, 1))
         self.configuration["oscillator"].set(randint(0, 1))
         self.configuration["update_interval"].set(randrange(200, 5000, 200))
@@ -68,6 +69,7 @@ class ConwayGameOfLifeGui(tk.Tk):
         self.configuration["show_generation"].set(randint(0, 1))
 
     def check_entry(self):
+        """Pop dialog window when grid size value incorrect"""
         if (self.configuration["grid_size"].get() > 150
             or self.configuration["grid_size"].get() < 20) \
                 and self.configuration["grid_size"].get() != 0:
@@ -77,7 +79,18 @@ class ConwayGameOfLifeGui(tk.Tk):
             return True
 
     def restart_game(self):
-        pass
+        """Set default values in dict and show StartPage"""
+        # set default values in dict
+        self.configuration["glider"].set(0)
+        self.configuration["oscillator"].set(0)
+        self.configuration["update_interval"].set(600)
+        self.configuration["grid_size"].set(50)
+        self.configuration["random_fill"].set(0)
+        self.configuration["color_dead"].set(choice(self.colors))
+        self.configuration["color_alive"].set(choice(self.colors))
+        self.configuration["show_generation"].set(0)
+
+        self.show_frame(StartPage)
 
 
 class StartPage(tk.Frame):

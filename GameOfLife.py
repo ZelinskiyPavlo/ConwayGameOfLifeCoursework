@@ -17,8 +17,8 @@ class ConwayGameOfLifeCore:
         frame_ref = self.controller.core_frame_ref()
 
         self.fig, self.ax = plt.subplots()
-        canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=frame_ref)
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
         # getting values from controller dictionary
         self.grid_size = self.get_grid_size()
@@ -121,12 +121,12 @@ class ConwayGameOfLifeCore:
                                    hovercolor='0.975')
         self.button_start.on_clicked(
             lambda *args: self.anim.event_source.start())
-        # button_home_axes = plt.axes([0.01, 0.01, 0.15, 0.075])
-        # self.button_home = Button(button_home_axes, "На початок",
-        #                           color="skyblue",
-        #                           hovercolor='0.975')
-        # self.button_home.on_clicked(
-        #     lambda *args: self.controller.restart_game())
+        button_home_axes = plt.axes([0.01, 0.01, 0.15, 0.075])
+        self.button_home = Button(button_home_axes, "На початок",
+                                  color="skyblue",
+                                  hovercolor='0.975')
+        self.button_home.on_clicked(
+            lambda *args: self.restart())
 
     def add_glider(self, grid, size):
         """adds a glider in top left and bottom right side of grid"""
@@ -170,3 +170,10 @@ class ConwayGameOfLifeCore:
             return self.controller.configuration["color_alive"].get()
         else:
             return "white"
+
+    def restart(self):
+        """Stops animation, deletes canvas, and deliver other handling to
+        controller class"""
+        self.anim.event_source.stop()
+        self.canvas.get_tk_widget().destroy()
+        self.controller.restart_game()
