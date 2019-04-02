@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.widgets import Button
 import tkinter as tk
 
@@ -32,8 +33,6 @@ class ConwayGameOfLifeCore:
             "update_interval"].get()
         self.show_generation = self.controller.configuration[
             "show_generation"].get()
-        # self.color_dead = self.get_color_dead()
-        # self.color_alive = self.get_color_alive()
 
         # setting values for matPlot needs
         self.start_value = 0
@@ -42,7 +41,9 @@ class ConwayGameOfLifeCore:
         self.button_start = None
         self.button_home = None
 
-        self.img = self.ax.imshow(self.grid, interpolation='nearest')
+        colormap = self.create_colormap()
+        self.img = self.ax.imshow(self.grid, interpolation="nearest",
+                                  cmap=colormap)
         plt.axis("off")
         self.init_matplot_gui()
         self.anim = animation.FuncAnimation(self.fig, self.update,
@@ -159,17 +160,24 @@ class ConwayGameOfLifeCore:
         else:
             return 50
 
-    def get_color_dead(self):
-        if self.controller.configuration["color_dead"].get() != "":
-            return self.controller.configuration["color_dead"].get()
-        else:
-            return "black"
+    def create_colormap(self):
+        """determine which colors are chosen
+        and create colormap by this colors """
 
-    def get_color_alive(self):
-        if self.controller.configuration["color_alive"].get() != "":
-            return self.controller.configuration["color_alive"].get()
-        else:
-            return "white"
+        color_name_alive = self.controller.configuration["color_alive"].get()
+        color_name_dead = self.controller.configuration["color_dead"].get()
+
+        # set default values
+        if color_name_alive == "":
+            color_name_alive = "зелений"
+        if color_name_dead == "":
+            color_name_dead = "чорний"
+
+        color_alive = self.controller.colors[color_name_alive]
+        color_dead = self.controller.colors[color_name_dead]
+
+        colors = [color_dead, color_alive]
+        return LinearSegmentedColormap.from_list("MyColorMap", colors)
 
     def restart(self):
         """Stops animation, deletes canvas, and deliver other handling to

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import Core
+from collections import OrderedDict
 from random import randint, randrange, choice
 
 LARGE_FONT = ("Verdana", 12)
@@ -25,9 +26,19 @@ class ConwayGameOfLife(tk.Tk):
                               "color_dead": tk.StringVar(),
                               "color_alive": tk.StringVar(),
                               "show_generation": tk.IntVar()}
+
         # define color for combobox widgets
-        self.colors = ["white", "gray", "black", "blue", "red", "pink",
-                       "purple", "brown", "orange", "yellow", "green"]
+        # it needs to be ordered, bc we want the same order of colors in
+        # combobox each time we run the program
+        self.colors = OrderedDict({"чорний": (0, 0, 0),
+                                   "білий": (1, 1, 1),
+                                   "червоний": (1, 0, 0),
+                                   "синій": (0, 0, 1),
+                                   "зелений": (0, 1, 0),
+                                   "жовтий": (1, 1, 0),
+                                   "оранжевий": (1, 0.65, 0),
+                                   "фіолетовий": (0.5, 0, 0.5)})
+
         # dict with frames
         self.frames = {}
 
@@ -64,8 +75,10 @@ class ConwayGameOfLife(tk.Tk):
         self.configuration["update_interval"].set(randrange(200, 5000, 200))
         self.configuration["grid_size"].set(randrange(50, 150, 50))
         self.configuration["random_fill"].set(randint(0, 1))
-        self.configuration["color_dead"].set(choice(self.colors))
-        self.configuration["color_alive"].set(choice(self.colors))
+        self.configuration["color_dead"].set(
+            choice(list(self.colors.keys())))
+        self.configuration["color_alive"].set(
+            choice(list(self.colors.keys())))
         self.configuration["show_generation"].set(randint(0, 1))
 
     def check_entry(self):
@@ -86,8 +99,8 @@ class ConwayGameOfLife(tk.Tk):
         self.configuration["update_interval"].set(600)
         self.configuration["grid_size"].set(50)
         self.configuration["random_fill"].set(0)
-        self.configuration["color_dead"].set(choice(self.colors))
-        self.configuration["color_alive"].set(choice(self.colors))
+        self.configuration["color_dead"].set("")
+        self.configuration["color_alive"].set("")
         self.configuration["show_generation"].set(0)
 
         self.show_frame(StartPage)
@@ -221,9 +234,10 @@ class Configure(tk.Frame):
         dead_label.grid(row=1, column=0, pady=(0, 11), sticky=tk.W)
 
         combobox_color_dead = ttk.Combobox(frame2,
-                                           values=self.controller.colors,
+                                           values=list(
+                                               self.controller.colors.keys()),
                                            state="readonly",
-                                           width=7,
+                                           width=8,
                                            textvariable=self.controller.
                                            configuration["color_dead"])
         combobox_color_dead.grid(row=1, column=1, pady=(0, 11), padx=(15, 35),
@@ -233,9 +247,10 @@ class Configure(tk.Frame):
         alive_label.grid(row=2, column=0, pady=(0, 15), sticky=tk.W)
 
         combobox_color_alive = ttk.Combobox(frame2,
-                                            values=self.controller.colors,
+                                            values=list(
+                                                self.controller.colors.keys()),
                                             state="readonly",
-                                            width=7,
+                                            width=8,
                                             textvariable=self.controller.
                                             configuration["color_alive"])
         combobox_color_alive.grid(row=2, column=1, pady=(0, 15), padx=(15, 35),
