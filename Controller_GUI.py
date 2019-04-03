@@ -99,8 +99,8 @@ class ConwayGameOfLife(tk.Tk):
         self.configuration["update_interval"].set(600)
         self.configuration["grid_size"].set(50)
         self.configuration["random_fill"].set(0)
-        self.configuration["color_dead"].set("")
-        self.configuration["color_alive"].set("")
+        self.configuration["color_dead"].set("чорний")
+        self.configuration["color_alive"].set("зелений")
         self.configuration["show_generation"].set(0)
 
         self.show_frame(StartPage)
@@ -242,6 +242,8 @@ class Configure(tk.Frame):
                                            configuration["color_dead"])
         combobox_color_dead.grid(row=1, column=1, pady=(0, 11), padx=(15, 35),
                                  sticky=tk.W)
+        # set default value
+        combobox_color_dead.current(0)
 
         alive_label = tk.Label(frame2, text="Колір живої клітини")
         alive_label.grid(row=2, column=0, pady=(0, 15), sticky=tk.W)
@@ -255,6 +257,8 @@ class Configure(tk.Frame):
                                             configuration["color_alive"])
         combobox_color_alive.grid(row=2, column=1, pady=(0, 15), padx=(15, 35),
                                   sticky=tk.W)
+        # set default value
+        combobox_color_alive.current(4)
 
         show_generation_cb = tk.Checkbutton(frame2,
                                             text="Відображати номер генерації",
